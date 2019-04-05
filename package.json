@@ -1,0 +1,44 @@
+{
+  "name": "",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "postinstall": "webpack",
+    "start": "node server/main.js",
+    "start:dev": "npm run start-server & npm run build-watch",
+    "start-server": "./node_modules/.bin/nodemon server/main.js --watch server -e js,html",
+    "build-watch": "webpack -w",
+    "test": "jest ./tests/*.spec.js --watch --runInBand --silent",
+    "seed": "node bin/runSeed.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "express": "^4.16.4",
+    "pg": "^7.9.0",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4",
+    "react-router-dom": "^4",
+    "react-redux": "^6.0.1",
+    "redux": "^4.0.1",
+    "redux-thunk": "^2.3.0",
+    "sequelize": "^5.1.0",
+    "volleyball": "^1.5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.3.4",
+    "@babel/preset-env": "^7.3.4",
+    "@babel/preset-react": "^7.0.0",
+    "babel-loader": "^8.0.5",
+    "enzyme": "^3.9.0",
+    "enzyme-adapter-react-16": "^1.11.2",
+    "jest": "^24.5.0",
+    "nodemon": "^1.18.10",
+    "react-test-renderer": "^16.8.4",
+    "supertest": "^4.0.2",
+    "webpack": "^4.29.6",
+    "webpack-cli": "^3.3.0"
+  }
+}
