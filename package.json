@@ -6,9 +6,9 @@
     "postinstall": "webpack",
     "start": "node server/main.js",
     "start:dev": "npm run start-server & npm run build-watch",
-    "start-server": "./node_modules/.bin/nodemon server/main.js --watch server -e js,html",
+    "start-server": "./node_modules/.bin/nodemon server/index.js --watch server -e js,html",
     "build-watch": "webpack -w",
-    "test": "jest ./tests/*.spec.js --watch --runInBand --silent",
+    "test": "DATABASE_URL=postgres://localhost/acme_product_managers_test jest ./tests/db.spec.js --watch --runInBand silent",
     "seed": "node bin/runSeed.js"
   },
   "keywords": [],
