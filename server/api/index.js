@@ -21,8 +21,8 @@ app.get('/api/managers', (req, res, next) => {
 })
 
 app.get('/api/products', (req, res, next) => {
-  Manager.findAll()
-    .then(managers => res.json(managers))
+  Product.findAll()
+    .then(products => res.json(products))
     .catch(next)
 })
 
