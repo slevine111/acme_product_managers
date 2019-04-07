@@ -1,8 +1,9 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { fetchAllDataOfModel } from '../store'
 import { connect } from 'react-redux'
 import { HashRouter, Route } from 'react-router-dom'
 import Navbar from './Navbar'
+import ProductList from './ProductList'
 
 class App extends Component {
   componentDidMount() {
@@ -17,7 +18,11 @@ class App extends Component {
       <div className="container">
         <h2>Acme Product Managers</h2>
         <HashRouter>
-          <Route render={() => <Navbar />} />
+          <Fragment>
+            <Route render={({ location }) => <Navbar location={location} />} />
+            <Route exact path="/" render={() => <h6>Welcome</h6>} />
+            <Route path="/products" component={ProductList} />
+          </Fragment>
         </HashRouter>
       </div>
     )
