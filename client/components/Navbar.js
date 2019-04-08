@@ -13,15 +13,18 @@ const createLink = (route, htmlString, pathname) => {
   )
 }
 
-const Navbar = ({ location }) => {
+const Navbar = ({ location, numberOfManagersWithProducts }) => {
   const { pathname } = location
   const arrayOfLinks = [
     { route: '/', htmlString: 'Home' },
     { route: '/products', htmlString: 'Products' },
-    { route: '/managers', htmlString: 'Managers' }
+    {
+      route: '/managers',
+      htmlString: `Managers (${numberOfManagersWithProducts})`
+    }
   ]
   return (
-    <ul className="nav nav-tabs">
+    <ul className="nav nav-pills">
       {arrayOfLinks.map(link =>
         createLink(link.route, link.htmlString, pathname)
       )}

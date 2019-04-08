@@ -2,13 +2,19 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import axios from 'axios'
 
-//action types
+//action creators
 const GET_ALL_MANAGERS = Symbol('GET_ALL_MANAGERS')
 const GET_ALL_PRODUCTS = Symbol('GET_ALL_PRODUCTS')
+const GET_PRODUCTS_AFTER_UPDATE = Symbol('GET_PRODUCTS_AFTER_UPDATE')
 
-//aaction creators
+//aaction types
 const getAllManagers = managers => ({ type: GET_ALL_MANAGERS, managers })
 const getAllProducts = products => ({ type: GET_ALL_PRODUCTS, products })
+const getProductsAfterUpdate = (id, changedProduct) => ({
+  type: GET_PRODUCTS_AFTER_UPDATE,
+  id,
+  changedProduct
+})
 
 //thunks
 const fetchAllDataOfModel = model => {
@@ -20,6 +26,19 @@ const fetchAllDataOfModel = model => {
   }
 }
 
+const updateProduct = (id, product) => {
+  const changedProduct = {
+    ...product,
+    managerId: product.managerId === 0 ? null : product.managerId
+  }
+  return dispatch => {
+    return axios
+      .put(`/api/products/${id}`, changedProduct)
+      .then(({ data }) => dispatch(getProductsAfterUpdate(id, data)))
+  }
+}
+
+//reducers
 const managerReducer = (state = [], action) => {
   switch (action.type) {
     case GET_ALL_MANAGERS:
@@ -33,6 +52,10 @@ const productReducer = (state = [], action) => {
   switch (action.type) {
     case GET_ALL_PRODUCTS:
       return action.products
+    case GET_PRODUCTS_AFTER_UPDATE:
+      return state.map(product =>
+        product.id === action.id ? action.changedProduct : product
+      )
     default:
       return state
   }
@@ -45,4 +68,4 @@ const store = createStore(
 
 export default store
 
-export { fetchAllDataOfModel }
+export { fetchAllDataOfModel, updateProduct }

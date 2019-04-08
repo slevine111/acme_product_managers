@@ -1,23 +1,38 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import { updateProduct } from '../store'
+//import PropTypes from 'prop-types'
 
-export class Product extends Component {
+class Product extends Component {
   constructor(props) {
     super(props)
-    this.state = { managerId: this.props.product.managerId }
+    this.state = { managerId: this.props.product.managerId || 0, error: '' }
     this.handleChange = this.handleChange.bind(this)
+    this.handleSave = this.handleSave.bind(this)
   }
 
   handleChange({ target }) {
-    return this.setState(
-      { [target.name]: target.value === null ? null : Number(target.value) },
-      () => console.log(this.state)
-    )
+    return this.setState({
+      [target.name]: Number(target.value)
+    })
+  }
+
+  handleSave(product) {
+    return this.props
+      .updateProduct(product.id, {
+        ...product,
+        managerId: this.state.managerId
+      })
+      .then(() => this.setState({ error: '' }))
+      .catch(({ response: { data } }) => {
+        this.setState({ error: data })
+      })
   }
 
   render() {
     const { product, managers } = this.props
     const { name, managerId } = product
+    const { error } = this.state
     return (
       <div className="list-group-item">
         <div>
@@ -34,7 +49,7 @@ export class Product extends Component {
             onChange={this.handleChange}
             value={this.state.managerId}
           >
-            <option value={null}>--none--</option>
+            <option value={0}>--none--</option>
             {managers.map(manager => (
               <option key={`${name}-${manager.id}`} value={manager.id}>
                 {manager.name}
@@ -42,10 +57,25 @@ export class Product extends Component {
             ))}
           </select>
         </div>
+        {error && (
+          <div className="alert alert-danger">
+            {Array.isArray(error) ? (
+              <ul>
+                You have the following errors:
+                {error.map((e, idx) => (
+                  <li key={idx}>e</li>
+                ))}
+              </ul>
+            ) : (
+              error
+            )}
+          </div>
+        )}
         <button
           type="button"
           className="btn btn-primary"
-          disabled={this.state.managerId === managerId}
+          disabled={this.state.managerId === (managerId || 0)}
+          onClick={() => this.handleSave(product)}
         >
           Save
         </button>
@@ -54,11 +84,13 @@ export class Product extends Component {
   }
 }
 
-const mapStateToProps = state => ({})
-
-const mapDispatchToProps = {}
+const mapDispatchToProps = dispatch => {
+  return {
+    updateProduct: (id, product) => dispatch(updateProduct(id, product))
+  }
+}
 
 export default connect(
-  mapStateToProps,
+  null,
   mapDispatchToProps
 )(Product)

@@ -15,13 +15,13 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/managers', (req, res, next) => {
-  Manager.findAll()
+  Manager.findAll({ order: ['name'] })
     .then(managers => res.json(managers))
     .catch(next)
 })
 
 app.get('/api/products', (req, res, next) => {
-  Product.findAll()
+  Product.findAll({ order: ['id'] })
     .then(products => res.json(products))
     .catch(next)
 })
@@ -33,17 +33,14 @@ app.put('/api/products/:id', (req, res, next) => {
     .catch(next)
 })
 
-app.use((req, res, next) => {
-  const error = new Error('Resource not found')
-  error.status = 404
-  next(error)
-})
+app.use((req, res) => res.status(404).send('Resource not found'))
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   let errorToSend
   if (Array.isArray(err.errors)) {
     errorToSend = err.errors.map(error => error.message)
   } else {
+    console.log('here')
     errorToSend = 'Internal Server Error'
   }
   res.status(err.status || 500).send(errorToSend)
