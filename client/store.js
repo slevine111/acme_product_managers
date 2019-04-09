@@ -2,13 +2,16 @@ import { createStore, combineReducers, applyMiddleware } from 'redux'
 import thunk from 'redux-thunk'
 import axios from 'axios'
 
-//action creators
+//action types
 const GET_ALL_MANAGERS = Symbol('GET_ALL_MANAGERS')
 const GET_ALL_PRODUCTS = Symbol('GET_ALL_PRODUCTS')
 const GET_PRODUCTS_AFTER_UPDATE = Symbol('GET_PRODUCTS_AFTER_UPDATE')
 
-//aaction types
-const getAllManagers = managers => ({ type: GET_ALL_MANAGERS, managers })
+//aaction creators
+const getAllManagers = managers => ({
+  type: GET_ALL_MANAGERS,
+  managers
+})
 const getAllProducts = products => ({ type: GET_ALL_PRODUCTS, products })
 const getProductsAfterUpdate = (id, changedProduct) => ({
   type: GET_PRODUCTS_AFTER_UPDATE,
@@ -68,4 +71,15 @@ const store = createStore(
 
 export default store
 
-export { fetchAllDataOfModel, updateProduct }
+export {
+  fetchAllDataOfModel,
+  updateProduct,
+  getAllManagers,
+  getAllProducts,
+  getProductsAfterUpdate,
+  GET_ALL_MANAGERS,
+  GET_ALL_PRODUCTS,
+  GET_PRODUCTS_AFTER_UPDATE,
+  managerReducer,
+  productReducer
+}

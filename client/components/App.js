@@ -7,7 +7,7 @@ import ProductList from './ProductList'
 import ManagerPage from './ManagerPage'
 import { getManagersWithProducts, managerOpenings } from '../helperfunctions'
 
-class App extends Component {
+export class App extends Component {
   componentDidMount() {
     return Promise.all([
       this.props.fetchAllDataOfModel('managers'),
@@ -18,7 +18,7 @@ class App extends Component {
   render() {
     const { managersWithProducts, trueIfManagerOpenings } = this.props
     return (
-      <div className="container">
+      <div className="container" managersWithProducts={managersWithProducts}>
         <h2>Acme Product Managers</h2>
         <HashRouter>
           <Fragment>

@@ -8,7 +8,7 @@
     "start:dev": "npm run start-server & npm run build-watch",
     "start-server": "./node_modules/.bin/nodemon server/index.js --watch server -e js,html",
     "build-watch": "webpack -w",
-    "test": "DATABASE_URL=postgres://localhost/acme_product_managers_test jest ./tests/Routes.spec.js --watch --runInBand",
+    "test": "DATABASE_URL=postgres://localhost/acme_product_managers_test jest ./tests/Store.spec.js --watch --runInBand",
     "seed": "node bin/runSeed.js"
   },
   "keywords": [],
@@ -38,6 +38,7 @@
     "jest": "^24.5.0",
     "nodemon": "^1.18.10",
     "react-test-renderer": "^16.8.4",
+    "redux-mock-store": "^1.5.3",
     "supertest": "^4.0.2",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
