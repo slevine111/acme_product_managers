@@ -137,7 +137,6 @@ describe('reducers', () => {
 
 describe('full test', () => {
   test('g', () => {
-    const tg = jest.spyOn(storeImports, 'fetchAllDataOfModel')
     const tx = jest.spyOn(storeImports, 'managerReducer')
     const store = createStore(
       combineReducers({
@@ -146,11 +145,13 @@ describe('full test', () => {
       }),
       applyMiddleware(thunk)
     )
+    const tg = jest.spyOn(storeImports, 'getAllManagers')
+
     return store
       .dispatch(storeImports.fetchAllDataOfModel('managers'))
       .then(r => {
         console.log(r)
-        console.log(tg.mock.calls[0])
+        console.log(tg.mock)
         console.log(tx.mock.calls)
       })
   })

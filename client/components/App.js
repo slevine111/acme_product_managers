@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react'
 import { fetchAllDataOfModel } from '../store'
 import { connect } from 'react-redux'
-import { HashRouter, Route } from 'react-router-dom'
+import { HashRouter, BrowserRouter, Route } from 'react-router-dom'
 import Navbar from './Navbar'
 import ProductList from './ProductList'
 import ManagerPage from './ManagerPage'
@@ -18,7 +18,7 @@ export class App extends Component {
   render() {
     const { managersWithProducts, trueIfManagerOpenings } = this.props
     return (
-      <div className="container" managersWithProducts={managersWithProducts}>
+      <div className="container">
         <h2>Acme Product Managers</h2>
         <HashRouter>
           <Fragment>

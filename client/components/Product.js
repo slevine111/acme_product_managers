@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { updateProduct } from '../store'
 //import PropTypes from 'prop-types'
 
-class Product extends Component {
+export class Product extends Component {
   constructor(props) {
     super(props)
     this.state = { managerId: this.props.product.managerId || 0, error: '' }

@@ -2,7 +2,7 @@ import React from 'react'
 import { connect } from 'react-redux'
 import Product from './Product'
 
-const ProductList = ({ managers, products }) => {
+export const ProductList = ({ managers, products }) => {
   return (
     <div>
       {products.map(product => (
