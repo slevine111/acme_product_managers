@@ -56,26 +56,7 @@ describe('store thunks', () => {
       .then(() => expect(store.getActions()).toEqual(expectedActions))
   })
   test('updateProduct should dispatch getProductsAfterUpdate', () => {
-    const mockReducer = action => {
-      switch (action[0].type) {
-        case storeImports.GET_ALL_PRODUCTS:
-          return action.products
-        case storeImports.GET_PRODUCTS_AFTER_UPDATE:
-          return [
-            { id: 1, name: 'chair', managerId: 1 },
-            { id: 2, name: 'chair', managerId: 3 }
-          ].map(product =>
-            product.id === action[0].id ? action[0].changedProduct : product
-          )
-        default:
-          return [
-            { id: 1, name: 'chair', managerId: 1 },
-            { id: 2, name: 'chair', managerId: 3 }
-          ]
-      }
-    }
-
-    const store = mockStore(mockReducer)
+    const store = mockStore({})
     const expectedActions = [
       {
         type: storeImports.GET_PRODUCTS_AFTER_UPDATE,
@@ -89,11 +70,6 @@ describe('store thunks', () => {
       )
       .then(() => {
         expect(store.getActions()).toEqual(expectedActions)
-
-        expect(store.getState()).toEqual([
-          { id: 1, name: 'chair', managerId: 1 },
-          { id: 2, name: 'chair', managerId: null }
-        ])
       })
   })
 })
@@ -135,9 +111,39 @@ describe('reducers', () => {
   })
 })
 
-describe('full test', () => {
-  test('g', () => {
-    const tx = jest.spyOn(storeImports, 'managerReducer')
+describe('semi integration tests on store', () => {
+  test('state of mockStore is correct when using a mock reducer and dispatching updateProducts', () => {
+    const mockReducer = action => {
+      switch (action[0].type) {
+        case storeImports.GET_ALL_PRODUCTS:
+          return action.products
+        case storeImports.GET_PRODUCTS_AFTER_UPDATE:
+          return [
+            { id: 1, name: 'chair', managerId: 1 },
+            { id: 2, name: 'chair', managerId: 3 }
+          ].map(product =>
+            product.id === action[0].id ? action[0].changedProduct : product
+          )
+        default:
+          return [
+            { id: 1, name: 'chair', managerId: 1 },
+            { id: 2, name: 'chair', managerId: 3 }
+          ]
+      }
+    }
+    const store = configureMockStore([thunk])(mockReducer)
+    return store
+      .dispatch(
+        storeImports.updateProduct(2, { id: 2, name: 'chair', managerId: 0 })
+      )
+      .then(() => {
+        expect(store.getState()).toEqual([
+          { id: 1, name: 'chair', managerId: 1 },
+          { id: 2, name: 'chair', managerId: null }
+        ])
+      })
+  })
+  test('state of real store after calling thunk dispatch', () => {
     const store = createStore(
       combineReducers({
         managers: storeImports.managerReducer,
@@ -145,14 +151,14 @@ describe('full test', () => {
       }),
       applyMiddleware(thunk)
     )
-    const tg = jest.spyOn(storeImports, 'getAllManagers')
-
     return store
       .dispatch(storeImports.fetchAllDataOfModel('managers'))
-      .then(r => {
-        console.log(r)
-        console.log(tg.mock)
-        console.log(tx.mock.calls)
+      .then(() => store.dispatch(storeImports.fetchAllDataOfModel('products')))
+      .then(() => {
+        expect(store.getState()).toEqual({
+          managers: [{ id: 1, name: 'Larry' }],
+          products: [{ id: 1, name: 'Larry' }]
+        })
       })
   })
 })

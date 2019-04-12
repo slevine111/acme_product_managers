@@ -1,7 +1,13 @@
 import React from 'react'
-import Enzyme, { shallow } from 'enzyme'
+import Enzyme, { shallow, mount } from 'enzyme'
 import Adapter from 'enzyme-adapter-react-16'
-import { Product as UnconnectedProduct } from '../../client/components/Product'
+import { Provider } from 'react-redux'
+import mockAxios from 'axios'
+import store, { fetchAllDataOfModel } from '../../client/store'
+import Product, {
+  Product as UnconnectedProduct
+} from '../../client/components/Product'
+
 Enzyme.configure({ adapter: new Adapter() })
 
 describe('Product component', () => {
@@ -74,5 +80,69 @@ describe('Product component', () => {
       propsProduct.product
     )
     instance.handleChange = actualMethod
+  })
+})
+
+describe('Connected product component', () => {
+  const originalMockGet = mockAxios.get
+  const originalMockPut = mockAxios.put
+  const standardProps = {
+    managers: [{ id: 1, name: 'larry' }, { id: 2, name: 'Curly' }],
+    product: { id: 2, name: 'foo', managerId: 1 }
+  }
+
+  mockAxios.get = jest
+    .fn()
+    .mockResolvedValueOnce({
+      data: [{ id: 1, name: 'larry' }, { id: 2, name: 'Curly' }]
+    })
+    .mockResolvedValueOnce({
+      data: [
+        { id: 1, name: 'bar', managerId: 1 },
+        { id: 2, name: 'foo', managerId: 1 },
+        { id: 3, name: 'bazz', managerId: 1 }
+      ]
+    })
+
+  mockAxios.put = jest
+    .fn()
+    .mockResolvedValue({ data: { id: 2, name: 'foo', managerId: 2 } })
+  const product = mount(
+    <Provider store={store}>
+      <Product {...standardProps} />
+    </Provider>
+  )
+  test('testing lifecycle of connected component', () => {
+    return store
+      .dispatch(fetchAllDataOfModel('managers'))
+      .then(() => store.dispatch(fetchAllDataOfModel('products')))
+      .then(() => {
+        mockAxios.get = originalMockGet
+      })
+      .then(() =>
+        product.find('select').simulate('change', {
+          target: { name: 'managerId', value: 2 }
+        })
+      )
+      .then(() => product.find('button').simulate('click', {}))
+      .then(() => {
+        expect(store.getState()).toEqual({
+          managers: [{ id: 1, name: 'larry' }, { id: 2, name: 'Curly' }],
+          products: [
+            { id: 1, name: 'bar', managerId: 1 },
+            { id: 2, name: 'foo', managerId: 2 },
+            { id: 3, name: 'bazz', managerId: 1 }
+          ]
+        })
+        expect(product.find('select').prop('value')).toBe(2)
+        expect(product.find(UnconnectedProduct).state()).toEqual({
+          managerId: 2,
+          error: ''
+        })
+      })
+      .then(() => {
+        mockAxios.get = originalMockGet
+        mockAxios.put = originalMockPut
+      })
   })
 })
